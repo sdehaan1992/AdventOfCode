@@ -53,6 +53,11 @@ public class Main
                 dayFive = new DayFive("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay5.txt");
                 System.out.println(dayFive.crateMover9001());
                 break;
+            case 6:
+                DaySix daySix = new DaySix("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay6.txt");
+                System.out.println(daySix.readInput(4));
+                System.out.println(daySix.readInput(14));
+                break;
             default:
                 System.out.println("Day not available yet");
         }
