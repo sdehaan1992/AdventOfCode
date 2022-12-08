@@ -60,7 +60,9 @@ public class Main
                 break;
             case 7:
                 DaySeven daySeven = new DaySeven("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay7.txt");
-                //System.out.println(daySeven));
+                break;
+            case 8:
+                DayEight dayEight = new DayEight("C:\\Users\\sander.de.haan\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay8.txt");
                 break;
             default:
                 System.out.println("Day not available yet");
