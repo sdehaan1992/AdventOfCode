@@ -7,7 +7,6 @@ import java.nio.file.Path;
 
 public class DayEight
 {
-    //private int[][] forest = new int[5][5];
     private int[][] forest = new int[99][99];
     private Path input;
 
@@ -15,6 +14,7 @@ public class DayEight
         this.input = Path.of(input);
         readInput();
         System.out.println(numberOfVisibleTrees());
+        System.out.println(scenicScore());
     }
 
     public int numberOfVisibleTrees()
@@ -34,16 +34,116 @@ public class DayEight
         return count;
     }
 
-    private boolean isVisible(int row, int column)
+    public int scenicScore()
     {
-        if(row == 0 || column == 0 || row == forest.length-1 || column == forest[row].length-1)
+        int highestScore = 0;
+        for(int row = 0; row < forest.length; row++)
         {
-            return true;
+            for(int column = 0; column < forest[row].length; column++)
+            {
+                if(!isEdge(row, column))
+                {
+                    int scenicScore = determineScenicScore(row, column);
+                    //System.out.printf("Scenic Score of tree %d,%d is %d\n", row, column, scenicScore);
+                    if(scenicScore > highestScore)
+                    {
+                        highestScore = scenicScore;
+                    }
+                }
+            }
         }
 
+        return highestScore;
+    }
+
+    private int determineScenicScore(int row, int column) {
+        return treesLeft(row, column) * treesRight(row, column) * treesAbove(row, column) * treesBelow(row, column);
+    }
+
+    private int treesBelow(int row, int column)
+    {
+        int count = 0;
         int treeHeight = forest[row][column];
-        
-        return checkBelow(row, column, treeHeight) || checkAbove(row, column, treeHeight) || checkLeft(row, column, treeHeight) || checkRight(row, column, treeHeight);
+        for(int rowToCheck = row +1; rowToCheck < forest.length; rowToCheck++)
+        {
+            if(forest[rowToCheck][column] < treeHeight)
+            {
+                count++;
+            }
+            else
+            {
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+
+    private int treesAbove(int row, int column)
+    {
+        int count = 0;
+        int treeHeight = forest[row][column];
+        for(int rowToCheck = row -1; rowToCheck >= 0; rowToCheck--)
+        {
+            if(forest[rowToCheck][column] < treeHeight)
+            {
+                count++;
+            }
+            else
+            {
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+
+    private int treesRight(int row, int column)
+    {
+        int count = 0;
+        int treeHeight = forest[row][column];
+        for(int columnToCheck = column - 1; columnToCheck >= 0; columnToCheck--)
+        {
+            if(forest[row][columnToCheck] < treeHeight)
+            {
+                count++;
+            }
+            else
+            {
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+
+    private int treesLeft(int row, int column)
+    {
+        int count = 0;
+        int treeHeight = forest[row][column];
+        for(int columnToCheck = column +1; columnToCheck < forest[row].length; columnToCheck++)
+        {
+            if(forest[row][columnToCheck] < treeHeight)
+            {
+                count++;
+            }
+            else
+            {
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+
+    private boolean isVisible(int row, int column)
+    {
+        int treeHeight = forest[row][column];
+        return isEdge(row, column) || checkBelow(row, column, treeHeight) || checkAbove(row, column, treeHeight) || checkLeft(row, column, treeHeight) || checkRight(row, column, treeHeight);
+    }
+
+    private boolean isEdge(int row, int column) {
+        return row == 0 || column == 0 || row == forest.length - 1 || column == forest[row].length - 1;
     }
 
     private boolean checkBelow(int row, int column, int treeHeight) {
@@ -89,7 +189,6 @@ public class DayEight
         }
         return true;
     }
-
 
     private void readInput()
     {
