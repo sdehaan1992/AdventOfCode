@@ -12,13 +12,21 @@ public class DayNine
 {
     Path input;
     Knot head = new Knot(0,0);
-    Knot tail = new Knot(0,0);
 
-    public DayNine(String input)
+    Set<Point> tailVisits = new HashSet<>();
+
+    public DayNine(String input, int knots)
     {
         this.input = Path.of(input);
+        Knot currentKnot = head;
+        for(int i = 1; i < knots; i++)
+        {
+            Knot nextKnot = new Knot(0,0);
+            currentKnot.next = nextKnot;
+            currentKnot = nextKnot;
+        }
         readInput();
-        System.out.println(tail.visitedLocations.size());
+        System.out.println(tailVisits.size());
     }
 
     private void readInput()
@@ -63,13 +71,20 @@ public class DayNine
                 break;
         }
 
-        moveTail();
+        Knot currentKnot = head;
+        while(currentKnot.next != null)
+        {
+            moveRope(currentKnot, currentKnot.next);
+            currentKnot = currentKnot.next;
+        }
+
+        tailVisits.add(new Point(currentKnot.x, currentKnot.y));
     }
 
-    private void moveTail()
+    private void moveRope(Knot leader, Knot follower)
     {
-        int distance = Math.abs(head.x - tail.x);
-        distance += Math.abs(head.y - tail.y);
+        int distance = Math.abs(leader.x - follower.x);
+        distance += Math.abs(leader.y - follower.y);
         switch (distance)
         {
             case 0:
@@ -77,72 +92,73 @@ public class DayNine
                 // do nothing
                 break;
             case 2:
-                if(head.x - tail.x != 0 && head.y - tail.y != 0)
+                if(leader.x - follower.x != 0 && leader.y - follower.y != 0)
                 {
                     break;
                 }
-                else if(head.x - tail.x != 0)
+                else if(leader.x - follower.x != 0)
                 {
-                    if(head.x - tail.x > 0)
+                    if(leader.x - follower.x > 0)
                     {
-                        tail.translate(1, 0);
+                        follower.translate(1, 0);
                     }
                     else
                     {
-                        tail.translate(-1, 0);
+                        follower.translate(-1, 0);
                     }
                 }
                 else
                 {
-                    if (head.y > tail.y)
+                    if (leader.y > follower.y)
                     {
-                        tail.translate(0, 1);
+                        follower.translate(0, 1);
                     }
                     else
                     {
-                        tail.translate(0, -1);
+                        follower.translate(0, -1);
                     }
                 }
-                tail.visitedLocations.add(new Point(tail.x, tail.y));
                 break;
             case 3:
-                if(Math.abs(head.x - tail.x) > Math.abs(head.y - tail.y))
+                if(Math.abs(leader.x - follower.x) > Math.abs(leader.y - follower.y))
                 {
-                    if(head.x - tail.x > 0)
+                    if(leader.x - follower.x > 0)
                     {
-                        tail.translate(1, head.y - tail.y);
+                        follower.translate(1, leader.y - follower.y);
                     }
                     else
                     {
-                        tail.translate(-1, head.y - tail.y);
+                        follower.translate(-1, leader.y - follower.y);
                     }
                 }
                 else
                 {
-                    if (head.y > tail.y)
+                    if (leader.y > follower.y)
                     {
-                        tail.translate(head.x - tail.x, 1);
+                        follower.translate(leader.x - follower.x, 1);
                     }
                     else
                     {
-                        tail.translate(head.x - tail.x, -1);
+                        follower.translate(leader.x - follower.x, -1);
                     }
                 }
-                tail.visitedLocations.add(new Point(tail.x, tail.y));
                 break;
-            default:
-                System.out.println("Rope broke...");
+            case 4:
+                if(Math.abs(leader.x - follower.x) == Math.abs(leader.y - follower.y))
+                {
+                        follower.setLocation((leader.x + follower.x) / 2, (leader.y + follower.y) / 2);
+                }
+                break;
         }
     }
 
     private static class Knot extends Point
     {
-        Set<Point> visitedLocations = new HashSet<>();
+        Knot next;
 
         public Knot(int x, int y)
         {
             super(x, y);
-            visitedLocations.add(new Point(x, y));
         }
     }
 }
