@@ -11,7 +11,7 @@ import java.util.Set;
 public class DayNine
 {
     Path input;
-    Knot head = new Knot(0,0);
+    Knot head = new Knot(0, 0);
 
     Set<Point> tailVisits = new HashSet<>();
 
@@ -19,9 +19,9 @@ public class DayNine
     {
         this.input = Path.of(input);
         Knot currentKnot = head;
-        for(int i = 1; i < knots; i++)
+        for (int i = 1; i < knots; i++)
         {
-            Knot nextKnot = new Knot(0,0);
+            Knot nextKnot = new Knot(0, 0);
             currentKnot.next = nextKnot;
             currentKnot = nextKnot;
         }
@@ -47,7 +47,7 @@ public class DayNine
 
     private void performInstruction(String direction, int times)
     {
-        for(int i = 0; i < times; i++)
+        for (int i = 0; i < times; i++)
         {
             move(direction);
         }
@@ -55,7 +55,7 @@ public class DayNine
 
     private void move(String direction)
     {
-        switch(direction)
+        switch (direction)
         {
             case "U":
                 head.translate(0, 1);
@@ -64,7 +64,7 @@ public class DayNine
                 head.translate(0, -1);
                 break;
             case "L":
-                head.translate(-1,0);
+                head.translate(-1, 0);
                 break;
             case "R":
                 head.translate(1, 0);
@@ -72,7 +72,7 @@ public class DayNine
         }
 
         Knot currentKnot = head;
-        while(currentKnot.next != null)
+        while (currentKnot.next != null)
         {
             moveRope(currentKnot, currentKnot.next);
             currentKnot = currentKnot.next;
@@ -81,78 +81,36 @@ public class DayNine
         tailVisits.add(new Point(currentKnot.x, currentKnot.y));
     }
 
-    private void moveRope(Knot leader, Knot follower)
+    void moveRope(Knot leader, Knot follower)
     {
-        int distance = Math.abs(leader.x - follower.x);
-        distance += Math.abs(leader.y - follower.y);
+        int distance = (int) leader.distanceSq(follower);
+
         switch (distance)
         {
             case 0:
             case 1:
-                // do nothing
-                break;
             case 2:
-                if(leader.x - follower.x != 0 && leader.y - follower.y != 0)
-                {
-                    break;
-                }
-                else if(leader.x - follower.x != 0)
-                {
-                    if(leader.x - follower.x > 0)
-                    {
-                        follower.translate(1, 0);
-                    }
-                    else
-                    {
-                        follower.translate(-1, 0);
-                    }
-                }
-                else
-                {
-                    if (leader.y > follower.y)
-                    {
-                        follower.translate(0, 1);
-                    }
-                    else
-                    {
-                        follower.translate(0, -1);
-                    }
-                }
                 break;
-            case 3:
-                if(Math.abs(leader.x - follower.x) > Math.abs(leader.y - follower.y))
+            case 5:
+                if (Math.abs(leader.x - follower.x) == 2)
                 {
-                    if(leader.x - follower.x > 0)
-                    {
-                        follower.translate(1, leader.y - follower.y);
-                    }
-                    else
-                    {
-                        follower.translate(-1, leader.y - follower.y);
-                    }
-                }
-                else
+                    follower.setLocation((leader.x + follower.x) / 2, leader.y);
+                } else
                 {
-                    if (leader.y > follower.y)
-                    {
-                        follower.translate(leader.x - follower.x, 1);
-                    }
-                    else
-                    {
-                        follower.translate(leader.x - follower.x, -1);
-                    }
+                    follower.setLocation(leader.x, (leader.y + follower.y) / 2);
                 }
                 break;
             case 4:
-                if(Math.abs(leader.x - follower.x) == Math.abs(leader.y - follower.y))
-                {
-                        follower.setLocation((leader.x + follower.x) / 2, (leader.y + follower.y) / 2);
-                }
+            case 8:
+                follower.setLocation((leader.x + follower.x) / 2, (leader.y + follower.y) / 2);
                 break;
+            default:
+                System.out.println("impossible");
+                System.exit(1);
         }
     }
 
-    private static class Knot extends Point
+    static class Knot extends Point
     {
         Knot next;
 
