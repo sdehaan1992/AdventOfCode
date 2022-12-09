@@ -27,42 +27,51 @@ public class Main
         switch (dayToPick)
         {
             case 1:
-                DayOne dayOne = new DayOne("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\input2022.txt");
+                DayOne dayOne = new DayOne("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022" +
+                        "\\input2022.txt");
                 System.out.println(dayOne.findLargestXOrCrash(1));
                 System.out.println(dayOne.findLargestXOrCrash(3));
                 break;
             case 2:
-                DayTwo dayTwo = new DayTwo("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay2.txt");
+                DayTwo dayTwo = new DayTwo("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022" +
+                        "\\inputDay2.txt");
                 System.out.println(dayTwo.calculatePoints());
                 System.out.println(dayTwo.calculatePointsForReal());
                 break;
             case 3:
 
-                DayThree dayThree = new DayThree("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay3.txt");
+                DayThree dayThree = new DayThree("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources" +
+                        "\\2022\\inputDay3.txt");
                 System.out.println(dayThree.findCommonInRucksack());
                 System.out.println(dayThree.findBadgePriorities(3));
                 break;
             case 4:
-                DayFour dayFour = new DayFour("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay4.txt");
+                DayFour dayFour = new DayFour("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources" +
+                        "\\2022\\inputDay4.txt");
                 System.out.println(dayFour.numberOfContainingPairs());
                 System.out.println(dayFour.numberOfOverlappingPairs());
                 break;
             case 5:
-                DayFive dayFive = new DayFive("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay5.txt");
+                DayFive dayFive = new DayFive("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources" +
+                        "\\2022\\inputDay5.txt");
                 System.out.println(dayFive.crateMover9000());
-                dayFive = new DayFive("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay5.txt");
+                dayFive = new DayFive("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022" +
+                        "\\inputDay5.txt");
                 System.out.println(dayFive.crateMover9001());
                 break;
             case 6:
-                DaySix daySix = new DaySix("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay6.txt");
+                DaySix daySix = new DaySix("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022" +
+                        "\\inputDay6.txt");
                 System.out.println(daySix.readInput(4));
                 System.out.println(daySix.readInput(14));
                 break;
             case 7:
-                DaySeven daySeven = new DaySeven("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay7.txt");
+                DaySeven daySeven = new DaySeven("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main\\resources" +
+                        "\\2022\\inputDay7.txt");
                 break;
             case 8:
-                DayEight dayEight = new DayEight("C:\\Users\\sander.de.haan\\IdeaProjects\\AdventOfCode\\src\\main\\resources\\2022\\inputDay8.txt");
+                DayEight dayEight = new DayEight("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main" +
+                        "\\resources\\2022\\inputDay8.txt");
                 break;
             default:
                 System.out.println("Day not available yet");
