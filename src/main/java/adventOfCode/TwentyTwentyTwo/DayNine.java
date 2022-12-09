@@ -18,6 +18,13 @@ public class DayNine
     public DayNine(String input, int knots)
     {
         this.input = Path.of(input);
+        createRope(knots);
+        readInput();
+        System.out.println(tailVisits.size());
+    }
+
+    private void createRope(int knots)
+    {
         Knot currentKnot = head;
         for (int i = 1; i < knots; i++)
         {
@@ -25,8 +32,6 @@ public class DayNine
             currentKnot.next = nextKnot;
             currentKnot = nextKnot;
         }
-        readInput();
-        System.out.println(tailVisits.size());
     }
 
     private void readInput()
