@@ -84,7 +84,7 @@ public class Main
                 break;
             case 11:
                 DayEleven dayEleven = new DayEleven("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main" +
-                        "\\resources\\2022\\inputDay11test.txt");
+                        "\\resources\\2022\\inputDay11.txt");
                 break;
             default:
                 System.out.println("Day not available yet");

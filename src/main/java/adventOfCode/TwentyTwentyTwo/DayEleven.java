@@ -17,16 +17,22 @@ public class DayEleven
     private final Path input;
     private final List<Monkey> monkeys = new ArrayList<>();
 
+    private int commonDivisor = 1;
+
     public DayEleven(String input)
     {
         this.input = Path.of(input);
         readInput();
-        for(int i = 0; i < 20; i++)
+        for (Monkey monkey : monkeys)
+        {
+            commonDivisor *= monkey.testValue;
+        }
+        for (int i = 0; i < 10000; i++)
         {
             round();
         }
         Collections.sort(monkeys);
-        System.out.println(monkeys.get(0).numberOfInspections * monkeys.get(1).numberOfInspections);
+        System.out.println((long) monkeys.get(0).numberOfInspections * monkeys.get(1).numberOfInspections);
     }
 
     private void readInput()
@@ -95,7 +101,7 @@ public class DayEleven
 
     private void round()
     {
-        for(Monkey monkey : monkeys)
+        for (Monkey monkey : monkeys)
         {
             monkey.items.forEach(monkey.testAndThrow);
             monkey.items.clear();
@@ -114,15 +120,19 @@ public class DayEleven
             @Override
             public void accept(Long integer)
             {
+                if(integer > DayEleven.this.commonDivisor)
+                {
+                    integer = integer % DayEleven.this.commonDivisor;
+                }
                 numberOfInspections++;
                 long worryValue;
                 long value = operationValue == 0 ? integer : operationValue;
                 if (operationSign.equals("*"))
                 {
-                    worryValue = (integer * value) / 3;
+                    worryValue = (integer * value);
                 } else
                 {
-                    worryValue = (integer + value) / 3;
+                    worryValue = (integer + value);
                 }
                 Monkey throwTo;
                 if (worryValue % testValue == 0)
@@ -139,11 +149,11 @@ public class DayEleven
         @Override
         public int compareTo(Monkey o)
         {
-            if(numberOfInspections > o.numberOfInspections)
+            if (numberOfInspections > o.numberOfInspections)
             {
                 return -1;
-            }
-            else {
+            } else
+            {
                 return 0;
             }
         }
