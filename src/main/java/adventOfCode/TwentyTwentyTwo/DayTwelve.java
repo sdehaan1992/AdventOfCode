@@ -5,7 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DayTwelve
@@ -29,13 +29,13 @@ public class DayTwelve
         finish.destinationFromSource = 0;
         findPathReverse(finish);
         int fastestToSeaLevel = Integer.MAX_VALUE;
-        for(GridPoint[] gridPoints : grid)
+        for (GridPoint[] gridPoints : grid)
         {
-            for(GridPoint gridPoint : gridPoints)
+            for (GridPoint gridPoint : gridPoints)
             {
-                if(gridPoint.height == 0 && gridPoint.destinationFromSource < fastestToSeaLevel)
+                if (gridPoint.height == 0 && gridPoint.destinationFromSource < fastestToSeaLevel)
                 {
-                    fastestToSeaLevel = gridPoint.destinationFromSource;;
+                    fastestToSeaLevel = gridPoint.destinationFromSource;
                 }
             }
         }
@@ -45,9 +45,9 @@ public class DayTwelve
 
     private void resetGrid()
     {
-        for(GridPoint[] gridPoints : grid)
+        for (GridPoint[] gridPoints : grid)
         {
-            for(GridPoint gridPoint : gridPoints)
+            for (GridPoint gridPoint : gridPoints)
             {
                 gridPoint.destinationFromSource = Integer.MAX_VALUE;
             }
