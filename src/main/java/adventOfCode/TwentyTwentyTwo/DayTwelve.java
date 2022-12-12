@@ -19,8 +19,43 @@ public class DayTwelve
     {
         this.input = Path.of(input);
         readInput();
+        // Part 1
         findPath(start);
         System.out.println(finish.destinationFromSource);
+
+        // Part 2
+        resetGrid();
+
+        int fastestToSeaLevel = Integer.MAX_VALUE;
+        for(GridPoint[] gridPoints : grid)
+        {
+            for(GridPoint gridPoint : gridPoints)
+            {
+                if(gridPoint.height == 0)
+                {
+                    gridPoint.destinationFromSource = 0;
+                    findPath(gridPoint);
+                    if(finish.destinationFromSource < fastestToSeaLevel)
+                    {
+                        fastestToSeaLevel = finish.destinationFromSource;
+                    }
+                    resetGrid();
+                }
+            }
+        }
+
+        System.out.println(fastestToSeaLevel);
+    }
+
+    private void resetGrid()
+    {
+        for(GridPoint[] gridPoints : grid)
+        {
+            for(GridPoint gridPoint : gridPoints)
+            {
+                gridPoint.destinationFromSource = Integer.MAX_VALUE;
+            }
+        }
     }
 
     private void findPath(GridPoint from)
