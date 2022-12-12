@@ -10,11 +10,8 @@ import java.util.List;
 
 public class DayTwelve
 {
-    private Path input;
-    private GridPoint[][] grid = new GridPoint[8][5];
-    private Stack<GridPoint> path = new Stack<>();
-    boolean pathFound = false;
-
+    private final Path input;
+    private final GridPoint[][] grid = new GridPoint[95][41];
     private GridPoint start;
     private GridPoint finish;
 
@@ -23,52 +20,40 @@ public class DayTwelve
         this.input = Path.of(input);
         readInput();
         findPath(start);
+        System.out.println(finish.destinationFromSource);
     }
 
     private void findPath(GridPoint from)
     {
-        for(GridPoint gridPoint : getNeighbours(from))
+        for (GridPoint gridPoint : getNeighbours(from))
         {
-            if(isVisitable(from, gridPoint))
+            if (isVisitable(from, gridPoint))
             {
-                if(gridPoint.equals(finish) || pathFound)
-                {
-                    pathFound = true;
-                    break;
-                }
-                else
-                {
-                    from.isVisited = true;
-                    findPath(gridPoint);
-                }
+                gridPoint.previousGridPoint = from;
+                gridPoint.destinationFromSource = from.destinationFromSource + 1;
+                findPath(gridPoint);
             }
-        }
-
-        if (pathFound)
-        {
-            System.out.printf("Found path, adding x=%d y=%d to Route\n", from.x, from.y);
-            path.push(from);
         }
     }
 
     private List<GridPoint> getNeighbours(GridPoint from)
     {
         List<GridPoint> neighbours = new ArrayList<>();
-        if(from.x != grid.length - 1)
+        if (from.x != grid.length - 1)
         {
-            neighbours.add(grid[from.x+1][from.y]);
+            neighbours.add(grid[from.x + 1][from.y]);
         }
-        if(from.x != 0)
+        if (from.x != 0)
         {
-            neighbours.add(grid[from.x-1][from.y]);
+            neighbours.add(grid[from.x - 1][from.y]);
         }
-        if(from.y != grid[grid.length - 1].length - 1)
+        if (from.y != grid[grid.length - 1].length - 1)
         {
-            neighbours.add(grid[from.x][from.y+1]);
+            neighbours.add(grid[from.x][from.y + 1]);
         }
-        if(from.y != 0)
+        if (from.y != 0)
         {
-            neighbours.add(grid[from.x][from.y-1]);
+            neighbours.add(grid[from.x][from.y - 1]);
         }
 
         return neighbours;
@@ -76,7 +61,7 @@ public class DayTwelve
 
     private boolean isVisitable(GridPoint from, GridPoint to)
     {
-        return Math.abs(from.height - to.height) <= 1 && !to.isVisited;
+        return Math.abs(from.height - to.height) <= 1 && from.destinationFromSource + 1 < to.destinationFromSource;
     }
 
     private void readInput()
@@ -84,26 +69,25 @@ public class DayTwelve
         try (BufferedReader bufferedReader = Files.newBufferedReader(input))
         {
             String line;
-            int yAxis = 5;
+            int yAxis = 41;
             while ((line = bufferedReader.readLine()) != null)
             {
                 int xAxis = 0;
                 yAxis--;
                 char[] points = line.toCharArray();
-                for(char point : points)
+                for (char point : points)
                 {
                     GridPoint gridPoint = new GridPoint(xAxis, yAxis);
-                    if(point == 83)
+                    if (point == 83)
                     {
                         gridPoint.height = 0;
                         start = gridPoint;
-                    }
-                    else if (point == 69)
+                        start.destinationFromSource = 0;
+                    } else if (point == 69)
                     {
                         gridPoint.height = 25;
                         finish = gridPoint;
-                    }
-                    else
+                    } else
                     {
                         gridPoint.height = point - 97;
                     }
@@ -121,8 +105,9 @@ public class DayTwelve
 
     private static class GridPoint extends Point
     {
-        boolean isVisited = false;
         int height;
+        GridPoint previousGridPoint = null;
+        int destinationFromSource = Integer.MAX_VALUE;
 
         public GridPoint(int x, int y)
         {
