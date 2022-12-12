@@ -61,7 +61,7 @@ public class DayTwelve
 
     private boolean isVisitable(GridPoint from, GridPoint to)
     {
-        return Math.abs(from.height - to.height) <= 1 && from.destinationFromSource + 1 < to.destinationFromSource;
+        return (from.height - to.height) >= -1 && from.destinationFromSource + 1 < to.destinationFromSource;
     }
 
     private void readInput()
