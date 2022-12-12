@@ -26,20 +26,16 @@ public class DayTwelve
         // Part 2
         resetGrid();
 
+        finish.destinationFromSource = 0;
+        findPathReverse(finish);
         int fastestToSeaLevel = Integer.MAX_VALUE;
         for(GridPoint[] gridPoints : grid)
         {
             for(GridPoint gridPoint : gridPoints)
             {
-                if(gridPoint.height == 0)
+                if(gridPoint.height == 0 && gridPoint.destinationFromSource < fastestToSeaLevel)
                 {
-                    gridPoint.destinationFromSource = 0;
-                    findPath(gridPoint);
-                    if(finish.destinationFromSource < fastestToSeaLevel)
-                    {
-                        fastestToSeaLevel = finish.destinationFromSource;
-                    }
-                    resetGrid();
+                    fastestToSeaLevel = gridPoint.destinationFromSource;;
                 }
             }
         }
@@ -71,6 +67,19 @@ public class DayTwelve
         }
     }
 
+    private void findPathReverse(GridPoint from)
+    {
+        for (GridPoint gridPoint : getNeighbours(from))
+        {
+            if (isVisitableReverse(from, gridPoint))
+            {
+                gridPoint.previousGridPoint = from;
+                gridPoint.destinationFromSource = from.destinationFromSource + 1;
+                findPathReverse(gridPoint);
+            }
+        }
+    }
+
     private List<GridPoint> getNeighbours(GridPoint from)
     {
         List<GridPoint> neighbours = new ArrayList<>();
@@ -97,6 +106,11 @@ public class DayTwelve
     private boolean isVisitable(GridPoint from, GridPoint to)
     {
         return (from.height - to.height) >= -1 && from.destinationFromSource + 1 < to.destinationFromSource;
+    }
+
+    private boolean isVisitableReverse(GridPoint from, GridPoint to)
+    {
+        return (from.height - to.height) <= 1 && from.destinationFromSource + 1 < to.destinationFromSource;
     }
 
     private void readInput()
