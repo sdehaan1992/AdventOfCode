@@ -20,14 +20,10 @@ public class DayTwelve
         this.input = Path.of(input);
         readInput();
         // Part 1
-        findPath(start);
-        System.out.println(finish.destinationFromSource);
+        findPath(finish);
+        System.out.println(start.destinationFromSource);
 
         // Part 2
-        resetGrid();
-
-        finish.destinationFromSource = 0;
-        findPathReverse(finish);
         int fastestToSeaLevel = Integer.MAX_VALUE;
         for (GridPoint[] gridPoints : grid)
         {
@@ -43,17 +39,6 @@ public class DayTwelve
         System.out.println(fastestToSeaLevel);
     }
 
-    private void resetGrid()
-    {
-        for (GridPoint[] gridPoints : grid)
-        {
-            for (GridPoint gridPoint : gridPoints)
-            {
-                gridPoint.destinationFromSource = Integer.MAX_VALUE;
-            }
-        }
-    }
-
     private void findPath(GridPoint from)
     {
         for (GridPoint gridPoint : getNeighbours(from))
@@ -63,19 +48,6 @@ public class DayTwelve
                 gridPoint.previousGridPoint = from;
                 gridPoint.destinationFromSource = from.destinationFromSource + 1;
                 findPath(gridPoint);
-            }
-        }
-    }
-
-    private void findPathReverse(GridPoint from)
-    {
-        for (GridPoint gridPoint : getNeighbours(from))
-        {
-            if (isVisitableReverse(from, gridPoint))
-            {
-                gridPoint.previousGridPoint = from;
-                gridPoint.destinationFromSource = from.destinationFromSource + 1;
-                findPathReverse(gridPoint);
             }
         }
     }
@@ -105,11 +77,6 @@ public class DayTwelve
 
     private boolean isVisitable(GridPoint from, GridPoint to)
     {
-        return (from.height - to.height) >= -1 && from.destinationFromSource + 1 < to.destinationFromSource;
-    }
-
-    private boolean isVisitableReverse(GridPoint from, GridPoint to)
-    {
         return (from.height - to.height) <= 1 && from.destinationFromSource + 1 < to.destinationFromSource;
     }
 
@@ -131,11 +98,11 @@ public class DayTwelve
                     {
                         gridPoint.height = 0;
                         start = gridPoint;
-                        start.destinationFromSource = 0;
                     } else if (point == 69)
                     {
                         gridPoint.height = 25;
                         finish = gridPoint;
+                        finish.destinationFromSource = 0;
                     } else
                     {
                         gridPoint.height = point - 97;
