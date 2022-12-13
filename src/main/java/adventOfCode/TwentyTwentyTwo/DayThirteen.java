@@ -5,163 +5,140 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DayThirteen
 {
     Path input;
-    List<SignalPair> signals = new ArrayList<>();
+    List<Signal> signals = new ArrayList<>();
 
     public DayThirteen(String input)
     {
         this.input = Path.of(input);
         readInput();
-        for(SignalPair signalPair : signals)
-        {
-            System.out.println(signalPair.isValid());
-        }
-        System.out.println("check");
     }
 
     private void readInput()
     {
         try (BufferedReader bufferedReader = Files.newBufferedReader(input))
         {
+            int count = 0;
+            int pairNumber = 0;
             String line;
-            SignalPair signalPair = new SignalPair();
-            boolean isPairOne = true;
+            List<Signal> signals = new ArrayList<>();
             while ((line = bufferedReader.readLine()) != null)
             {
+
                 if (line.isBlank())
                 {
-                    signalPair = new SignalPair();
+                    pairNumber++;
+                    if (signals.get(0).compareTo(signals.get(1)) <= 0)
+                    {
+                        count += pairNumber;
+                    }
+                    signals.clear();
                 } else
                 {
-                    if (isPairOne)
-                    {
-                        signalPair.pairOne = line;
-                    } else
-                    {
-                        signalPair.pairTwo = line;
-                        signals.add(signalPair);
-                    }
-                    isPairOne = !isPairOne;
+                    signals.add(new Signal(line));
+                    this.signals.add(new Signal(line));
                 }
             }
+            pairNumber++;
+            if (signals.get(0).compareTo(signals.get(1)) <= 0)
+            {
+                count += pairNumber;
+            }
+
+            System.out.println(count);
         } catch (IOException e)
         {
             throw new RuntimeException(e);
         }
+
+        int answer = 1;
+        this.signals.add(new Signal("[[2]]"));
+        this.signals.add(new Signal("[[6]]"));
+        Collections.sort(this.signals);
+        for (int i = 0; i < this.signals.size(); i++)
+        {
+            if (this.signals.get(i).line.equals("[[2]]") || this.signals.get(i).line.equals("[[6]]"))
+            {
+                answer *= (i + 1);
+            }
+        }
+        System.out.println(answer);
     }
 
-    private static class SignalPair
-    {
-        String pairOne, pairTwo;
 
-        boolean isValid()
+    private static class Signal implements Comparable<Signal>
+    {
+        int value;
+        List<Signal> signals = new ArrayList<>();
+        boolean isInteger = false;
+        String line;
+
+        public Signal(String signal)
         {
-            
+            line = signal;
+            if (!signal.startsWith("["))
+            {
+                value = Integer.parseInt(signal);
+                isInteger = true;
+            } else if (!signal.equals("[]"))
+            {
+                signal = signal.substring(1, signal.length() - 1);
+                int nestingLevel = 0;
+                StringBuilder currentSignal = new StringBuilder();
+                for (char character : signal.toCharArray())
+                {
+                    if (character == ',' && nestingLevel == 0)
+                    {
+                        signals.add(new Signal(currentSignal.toString()));
+                        currentSignal = new StringBuilder();
+                    } else
+                    {
+                        if (character == '[')
+                        {
+                            nestingLevel++;
+                        } else if (character == ']')
+                        {
+                            nestingLevel--;
+                        }
+                        currentSignal.append(character);
+                    }
+                }
+                if (!currentSignal.toString().equals(""))
+                {
+                    signals.add(new Signal(currentSignal.toString()));
+                }
+            }
         }
 
-
-//        boolean isValid()
-//        {
-//            // Check if amount of integers in pair 1 does not exceed pair 2
-//            Pattern pattern = Pattern.compile("\\d+");
-//            Matcher matcherPairOne = pattern.matcher(pairOne);
-//            Matcher matcherPairTwo = pattern.matcher(pairTwo);
-//
-//            int pairOneNumbers = 0;
-//            int pairTwoNumbers = 0;
-//
-//            while (matcherPairOne.find())
-//            {
-//                pairOneNumbers++;
-//            }
-//            while (matcherPairTwo.find())
-//            {
-//                pairTwoNumbers++;
-//            }
-//            if (pairOneNumbers > pairTwoNumbers)
-//            {
-//                return false;
-//            }
-//
-//            if(pairOneNumbers == 0 && pairTwoNumbers == 0)
-//            {
-//                return pairTwo.length() > pairOne.length();
-//            }
-//
-//            StringBuilder pairOneFixed = new StringBuilder();
-//            StringBuilder pairTwoFixed = new StringBuilder();
-//
-//            int p1 = 0;
-//            int p2 = 0;
-//            while (p1 < pairOne.length() && p2 < pairTwo.length())
-//            {
-//                if (pairOne.charAt(p1) == pairTwo.charAt(p2))
-//                {
-//                    pairOneFixed.append(pairOne.charAt(p1));
-//                    pairTwoFixed.append(pairTwo.charAt(p2));
-//                    p1++;
-//                    p2++;
-//                } else
-//                {
-//                    if (pairOne.charAt(p1) == '[')
-//                    {
-//                        pairOneFixed.append(pairOne.charAt(p1));
-//                        pairTwoFixed.append('[');
-//                        pairTwoFixed.append(pairTwo.charAt(p2));
-//                        pairTwoFixed.append(']');
-//                        p1++;
-//                        p2++;
-//                    } else if (pairTwo.charAt(p2) == '[')
-//                    {
-//                        pairOneFixed.append('[');
-//                        pairOneFixed.append(pairOne.charAt(p1));
-//                        pairOneFixed.append(']');
-//                        pairTwoFixed.append(pairTwo.charAt(p2));
-//                        p2++;
-//                        p1++;
-//                    } else if (pairOne.charAt(p1) == ']')
-//                    {
-//                        pairOneFixed.append(pairOne.charAt(p1));
-//                        pairTwoFixed.append(pairOne.charAt(p1));
-//                        p1++;
-//                    } else if (pairTwo.charAt(p2) == ']')
-//                    {
-//                        pairOneFixed.append(pairTwo.charAt(p2));
-//                        pairTwoFixed.append(pairTwo.charAt(p2));
-//                        p2++;
-//                    }
-//                    else
-//                    {
-//                        pairOneFixed.append(pairOne.charAt(p1));
-//                        pairTwoFixed.append(pairTwo.charAt(p2));
-//                        p1++;
-//                        p2++;
-//                    }
-//                }
-//            }
-//
-//            String comparePair1 = pairOneFixed.toString();
-//            String comparePair2 = pairTwoFixed.toString();
-//            for(int i = 0; i < comparePair1.length(); i++)
-//            {
-//                if(comparePair1.charAt(i) > comparePair2.charAt(i))
-//                {
-//                    return false;
-//                }
-//            }
-//
-//            return true;
-//        }
-
-        private void determineStructure()
+        @Override
+        public int compareTo(Signal o)
         {
+            if (isInteger && o.isInteger)
+            {
+                return Integer.compare(value, o.value);
+            } else if (!isInteger && !o.isInteger)
+            {
+                for (int i = 0; i < Math.min(signals.size(), o.signals.size()); i++)
+                {
+                    int comparison = signals.get(i).compareTo(o.signals.get(i));
+                    if (comparison != 0)
+                    {
+                        return comparison;
+                    }
+                }
+                return Integer.compare(signals.size(), o.signals.size());
+            }
 
+            if (isInteger)
+            {
+                return new Signal("[" + value + "]").compareTo(o);
+            }
+            return this.compareTo(new Signal("[" + o.value + "]"));
         }
     }
 }
