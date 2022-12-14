@@ -94,6 +94,10 @@ public class Main
                 DayThirteen dayThirteen = new DayThirteen("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main" +
                         "\\resources\\2022\\inputDay13.txt");
                 break;
+            case 14:
+                DayFourteen dayFourteen = new DayFourteen("C:\\Users\\san-d\\IdeaProjects\\AdventOfCode\\src\\main" +
+                        "\\resources\\2022\\inputDay14.txt");
+                break;
             default:
                 System.out.println("Day not available yet");
         }
