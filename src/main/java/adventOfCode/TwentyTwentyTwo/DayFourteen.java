@@ -5,33 +5,110 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DayFourteen
 {
     Path input;
     List<String> lines = new ArrayList<>();
+    int maximumY = 0;
 
     Map<Point, GridObject> grid = new HashMap<>();
 
     public DayFourteen(String input)
     {
         this.input = Path.of(input);
-        readInput();
-        fillGrid();
-
-        // Part 1
-        System.out.println(answerPart1());
+        //        readInput(true);
+        //        fillGrid();
+        //
+        //        // Part 1
+        //        System.out.println(answerPart1());
 
         // Part 2
         grid.clear();
         lines.clear();
-        readInput();
+        readInput(false);
         fillGrid();
+        cheat();
+        draw();
+        System.out.println(answerPart2());
+    }
 
+    private void draw()
+    {
+        List<Point> points = new ArrayList<>(grid.keySet());
+        Collections.sort(points, new Comparator<Point>()
+        {
+            @Override
+            public int compare(Point o1, Point o2)
+            {
+                if (o1.y < o2.y)
+                {
+                    return -1;
+                }
+                if (o1.y > o2.y)
+                {
+                    return 1;
+                }
+                return Integer.compare(o1.x, o2.x);
+            }
+        });
+
+//        int xAxisSize = 25;
+        int xAxisSize = points.get(points.size() - 1).x - points.get(0).x + 1;
+
+        for (int i = 0; i < points.size(); i++)
+        {
+            if (i % xAxisSize == 0)
+            {
+                System.out.print("\n");
+            }
+            System.out.print(grid.get(points.get(i)).display);
+        }
+    }
+
+
+    private void cheat()
+    {
+        List<Point> points = new ArrayList<>(grid.keySet());
+        Comparator<Point> pointComparator = (o1, o2) ->
+            {
+                if (o1.y < o2.y)
+                {
+                    return -1;
+                }
+                if (o1.y > o2.y)
+                {
+                    return 1;
+                }
+                return Integer.compare(o1.x, o2.x);
+            };
+        Collections.sort(points, pointComparator);
+
+        int leftx = points.get(0).x;
+        int rightx = points.get(points.size() - 1).x;
+
+        int maxSandOnBottomRow = maximumY * 2 + 1;
+        List<Point> points2 = getAllPointsOnLine(new Point(500 - (maxSandOnBottomRow / 2 + 1), maximumY + 1),
+                new Point(500 + (maxSandOnBottomRow / 2 + 1), maximumY + 1));
+        fillWithRocks(points2);
+
+        points = new ArrayList<>(grid.keySet());
+        Collections.sort(points, pointComparator);
+
+        int newLeftx = 337;
+//        int newLeftx = points.get(maximumY * (rightx - leftx)).x;
+        int newRightx = points.get(points.size() - 1).x;
+
+        for(int i = 0; i < leftx - newLeftx; i++)
+        {
+            fillWithAir(getAllPointsOnLine(new Point(newLeftx + i, 0), new Point(newLeftx + i, maximumY)));
+        }
+        for(int i = 0; i < newRightx - rightx; i++)
+        {
+            fillWithAir(getAllPointsOnLine(new Point(newRightx - i, 0), new Point(newRightx - i, maximumY)));
+        }
     }
 
     private int answerPart1()
@@ -42,12 +119,33 @@ public class DayFourteen
         while (sand == null || grid.size() == gridSize)
         {
             sand = new Sand();
-            sand.flow(grid);
+            sand.flowWithAbyss(grid);
             grid.put(new Point(sand.position), sand);
             count++;
         }
 
         return --count;
+    }
+
+    private int answerPart2()
+    {
+        int count = 0;
+        Sand sand = null;
+        int gridSize = grid.size();
+        while (sand == null || grid.size() == gridSize)
+        {
+            sand = new Sand();
+            sand.flow(grid);
+            grid.put(new Point(sand.position), sand);
+            if (sand.position.equals(new Point(500, 0)))
+            {
+//                draw();
+                grid.clear();
+            }
+            count++;
+        }
+
+        return count;
     }
 
     private void fillGrid()
@@ -75,6 +173,14 @@ public class DayFourteen
         for (Point point : points)
         {
             grid.put(point, new Rock());
+        }
+    }
+
+    private void fillWithAir(List<Point> points)
+    {
+        for (Point point : points)
+        {
+            grid.put(point, new Air());
         }
     }
 
@@ -117,12 +223,12 @@ public class DayFourteen
         return points;
     }
 
-    private void readInput()
+    private void readInput(boolean isPartOne)
     {
         try (BufferedReader bufferedReader = Files.newBufferedReader(input))
         {
             String line;
-            int minimumX = Integer.MAX_VALUE, maximumX = 0, maximumY = 0;
+            int minimumX = Integer.MAX_VALUE, maximumX = 0;
             while ((line = bufferedReader.readLine()) != null)
             {
                 lines.add(line);
@@ -146,6 +252,11 @@ public class DayFourteen
                     }
                 }
             }
+            if (!isPartOne)
+            {
+                maximumY++;
+            }
+
             for (int i = 0; i <= maximumY; i++)
             {
                 List<Point> points = getAllPointsOnLine(new Point(minimumX, i), new Point(maximumX, i));
@@ -154,6 +265,7 @@ public class DayFourteen
                     grid.put(point, new Air());
                 }
             }
+
 
         } catch (IOException e)
         {
@@ -193,7 +305,7 @@ public class DayFourteen
             display = "+";
         }
 
-        void flow(Map<Point, GridObject> grid)
+        void flowWithAbyss(Map<Point, GridObject> grid)
         {
             while (!isAtRest && grid.get(position) != null)
             {
@@ -209,6 +321,30 @@ public class DayFourteen
                     continue;
                 }
                 if (grid.get(new Point(position.x + 1, position.y + 1)) instanceof Air || grid.get(new Point(position.x + 1, position.y + 1)) == null)
+                {
+                    position.translate(1, 1);
+                } else
+                {
+                    isAtRest = true;
+                }
+            }
+        }
+
+        void flow(Map<Point, GridObject> grid)
+        {
+            while (!isAtRest)
+            {
+                if (grid.get(new Point(position.x, position.y + 1)) instanceof Air)
+                {
+                    position.translate(0, 1);
+                    continue;
+                }
+                if (grid.get(new Point(position.x - 1, position.y + 1)) instanceof Air)
+                {
+                    position.translate(-1, 1);
+                    continue;
+                }
+                if (grid.get(new Point(position.x + 1, position.y + 1)) instanceof Air)
                 {
                     position.translate(1, 1);
                 } else
