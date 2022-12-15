@@ -31,7 +31,7 @@ public class DayFourteen
         readInput(false);
         fillGrid();
         cheat();
-        draw();
+        //draw();
         System.out.println(answerPart2());
     }
 

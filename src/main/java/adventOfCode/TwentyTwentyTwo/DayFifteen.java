@@ -1,14 +1,11 @@
 package adventOfCode.TwentyTwentyTwo;
 
-import java.awt.*;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,17 +26,17 @@ public class DayFifteen
     private void answerPart1()
     {
         List<Pair<Integer, Integer>> pairs = new ArrayList<>();
-        Map<Point, Object> beaconsOnRow = new HashMap<>();
+        Set<Point> beaconsOnRow = new HashSet<>();
         for (Sensor sensor : sensorList)
         {
             if(sensor.closestBeacon.y == 2_000_000)
             {
-                beaconsOnRow.put(sensor.closestBeacon, new Object());
+                beaconsOnRow.add(sensor.closestBeacon);
             }
             Pair<Integer, Integer> pair = sensor.getRangeOfPointsScannedForY(2_000_000);
             if(pair != null)
             {
-                pairs.add(sensor.getRangeOfPointsScannedForY(2_000_000));
+                pairs.add(pair);
             }
         }
 
@@ -233,7 +230,5 @@ public class DayFifteen
             this.key = key;
             this.value = value;
         }
-
-
     }
 }
