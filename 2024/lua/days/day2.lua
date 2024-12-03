@@ -46,7 +46,6 @@ end
 day2.part2 = function(file)
 	local local_file = io.open(file, "r")
 	local safe = 0
-	local linenr = 0
 	for line in local_file:lines() do
 		local levels = {}
 		for value in string.gmatch(line, "%d+") do
