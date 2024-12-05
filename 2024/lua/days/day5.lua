@@ -66,7 +66,6 @@ day5.part1 = function(file)
 end
 
 day5.part2 = function(file)
-	local correct_pages = {}
 	local result = 0
 	if #order == 0 then
 		day5.part1(file)
@@ -79,17 +78,13 @@ day5.part2 = function(file)
 		end
 		while not is_valid do
 			for idx, _ in pairs(pages) do
-				-- print("checking page " .. table.concat(pages, " "))
 				is_valid = is_page_valid(pages, idx, order, true)
+				if not is_valid then
+					break
+				end
 			end
 		end
-		table.insert(correct_pages, pages)
 		result = result + (pages[(#pages + 1) // 2])
-	end
-
-	for key, value in pairs(correct_pages) do
-		print("corrected page " ..
-		invalid_lines[key] .. " TO ----------------- " .. table.concat(correct_pages[key], " "))
 	end
 
 	return result
