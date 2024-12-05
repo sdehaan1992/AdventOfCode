@@ -3,17 +3,13 @@ local day5 = {}
 local invalid_lines = {}
 local order = {}
 
-local function is_page_valid(pages, page_idx, order_table, reorder)
+local function is_page_valid(pages, page_idx, order_table)
 	local page_number = pages[page_idx]
 	for i = page_idx, 1, -1 do
 		local page_to_check = pages[i]
 		if order_table[page_number] ~= nil then
 			for _, value in pairs(order_table[page_number]) do
 				if value == page_to_check then
-					if reorder then
-						table.remove(pages, i)
-						table.insert(pages, page_idx, value)
-					end
 					return false
 				end
 			end
@@ -67,24 +63,39 @@ end
 
 day5.part2 = function(file)
 	local result = 0
-	if #order == 0 then
+	if #invalid_lines == 0 then
 		day5.part1(file)
 	end
 	for _, line in pairs(invalid_lines) do
-		local is_valid = false
 		local pages = {}
 		for page in string.gmatch(line, "%d+") do
 			table.insert(pages, page)
 		end
-		while not is_valid do
-			for idx, _ in pairs(pages) do
-				is_valid = is_page_valid(pages, idx, order, true)
-				if not is_valid then
+		local corrected_pages = {}
+		local halfway = (#pages + 1) // 2
+		while #corrected_pages ~= halfway do
+			local page_to_check = table.remove(pages)
+			local next = true
+			for i = 1, #pages do
+				if order[pages[i]] ~= nil then
+					for _, value in pairs(order[pages[i]]) do
+						if value == page_to_check then
+							table.insert(pages, 1, page_to_check)
+							next = false
+							break
+						end
+					end
+				end
+				if next == false then
 					break
 				end
 			end
+			if next == true then
+				table.insert(corrected_pages, page_to_check)
+			end
 		end
-		result = result + (pages[(#pages + 1) // 2])
+
+		result = result + corrected_pages[#corrected_pages]
 	end
 
 	return result
