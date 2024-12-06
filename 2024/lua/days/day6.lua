@@ -1,6 +1,6 @@
 local day6 = {}
 
-local DIRECTION = { UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4 }
+local DIRECTION = { UP = 1, RIGHT = 2, DOWN = 3, LEFT = 4 }
 local visits = {}
 local objects = {}
 
@@ -8,27 +8,38 @@ local function walk(guard)
 	if guard.direction == DIRECTION.UP then
 		if objects[guard.row - 1][guard.col] ~= '#' then
 			guard.row = guard.row - 1
-		else
-			guard.direction = DIRECTION.RIGHT
+			-- else
+			-- 	guard.direction = DIRECTION.RIGHT
 		end
 	elseif guard.direction == DIRECTION.DOWN then
 		if objects[guard.row + 1][guard.col] ~= '#' then
 			guard.row = guard.row + 1
-		else
-			guard.direction = DIRECTION.LEFT
+			-- else
+			-- 	guard.direction = DIRECTION.LEFT
 		end
 	elseif guard.direction == DIRECTION.LEFT then
 		if objects[guard.row][guard.col - 1] ~= '#' then
 			guard.col = guard.col - 1
-		else
-			guard.direction = DIRECTION.UP
+			-- else
+			-- 	guard.direction = DIRECTION.UP
 		end
 	else
 		if objects[guard.row][guard.col + 1] ~= '#' then
 			guard.col = guard.col + 1
-		else
-			guard.direction = DIRECTION.DOWN
+			-- else
+			-- 	guard.direction = DIRECTION.DOWN
 		end
+	end
+end
+
+local function step(guard)
+	local curr_loc = { row = guard.row, col = guard.col }
+	for i = 1, 4 do
+		walk(guard)
+		if guard.row ~= curr_loc.row or guard.col ~= curr_loc.col then
+			break
+		end
+		guard.direction = guard.direction % 4 + 1
 	end
 end
 
@@ -38,7 +49,7 @@ local function start_walking(guard, grid, row, col)
 			or (guard.direction == DIRECTION.DOWN and guard.row == row)
 			or (guard.direction == DIRECTION.LEFT and guard.col == 1)
 			or (guard.direction == DIRECTION.RIGHT and guard.col == col)) do
-		walk(guard)
+		step(guard)
 		-- print("new loc: " .. guard.row .. "," .. guard.col)
 		if grid[guard.row][guard.col] == nil then
 			grid[guard.row][guard.col] = { marker = 'X', direction = { guard.direction } }
@@ -105,7 +116,7 @@ day6.part2 = function(file)
 		if not success then
 			-- print("   failed")
 			result = result + 1
-			print(add_object.row .. "," .. add_object.col)
+			-- print(add_object.row .. "," .. add_object.col)
 		end
 
 		table.insert(attempt, 1, { row = starting_point.row, col = starting_point.col })
