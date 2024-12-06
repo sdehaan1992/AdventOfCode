@@ -22,4 +22,4 @@ end
 -- execute(5, 1, day5.part1, "../input/day5.txt")
 -- execute(5, 2, day5.part2, "../input/day5.txt")
 -- execute(6, 1, day6.part1, "../input/day6.txt")
-execute(6, 2, day6.part2, "../input/day6-example.txt")
+execute(6, 2, day6.part2, "../input/day6.txt")
