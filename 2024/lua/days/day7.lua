@@ -1,36 +1,27 @@
 local day7 = {}
 
-local function generate_combinations(numbers)
-	local combinations = {}
-
-	local function combine(nums, idx, current_expr)
-		if idx == #nums then
-			table.insert(combinations, current_expr)
-			return
+local function can_make_target(target, parts, is_part_two)
+	local result = false
+	local function create_and_evaluate(curr_value, part_idx)
+		if part_idx <= #parts and curr_value <= target then
+			local new_part = part_idx + 1
+			create_and_evaluate(curr_value + parts[part_idx], new_part)
+			create_and_evaluate(curr_value * parts[part_idx], new_part)
+			if is_part_two then
+				create_and_evaluate(tonumber(curr_value .. "" .. parts[part_idx]), new_part)
+			end
 		end
 
-		local next_num = nums[idx + 1]
-		combine(nums, idx + 1, current_expr .. " + " .. next_num .. ")")
-		combine(nums, idx + 1, current_expr .. " * " .. next_num .. ")")
-	end
-
-	combine(numbers, 1, string.rep('(', #numbers - 1) .. tostring(numbers[1]))
-
-	return combinations
-end
-
-local function brute_force_part1(target, parts)
-	local combinations = generate_combinations(parts)
-	for _, entry in pairs(combinations) do
-		local func = load("return " .. entry)
-		if func() == target then
-			return true
+		if curr_value == target and part_idx > #parts then
+			result = true
 		end
 	end
-	return false
+
+	create_and_evaluate(parts[1], 2)
+	return result
 end
 
-day7.part1 = function(file)
+local function execute(file, is_part_two)
 	local local_file = io.open(file, 'r')
 	local result = 0
 	for line in local_file:lines() do
@@ -41,7 +32,7 @@ day7.part1 = function(file)
 			table.insert(parts, tonumber(part))
 		end
 
-		if brute_force_part1(target, parts) then
+		if can_make_target(target, parts, is_part_two) then
 			result = result + target
 		end
 	end
@@ -49,7 +40,12 @@ day7.part1 = function(file)
 	return result
 end
 
+day7.part1 = function(file)
+	return execute(file)
+end
+
 day7.part2 = function(file)
+	return execute(file, true)
 end
 
 return day7
