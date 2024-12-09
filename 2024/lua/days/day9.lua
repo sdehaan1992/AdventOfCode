@@ -40,83 +40,65 @@ day9.part1 = function(file)
 	return result
 end
 
-local function print_disk(files, fragmented)
-	local disk = {}
-	for i = 1, #files do
-		for data = 1, files[i].size do
-			table.insert(disk, files[i].file_id)
-		end
-		for empty = 1, fragmented[i] do
-			table.insert(disk, ".")
-		end
-	end
-
+local function print_disk(disk)
 	local str = ""
-	for _, value in pairs(disk) do
-		str = str .. value
+	for _, value in ipairs(disk) do
+		if value.file_id == 0 then
+			str = str .. string.rep("0", value.size)
+		else
+			str = str .. string.rep(tostring(value.file_id), value.size)
+		end
 	end
-	return str
+	print(str)
 end
 
 day9.part2 = function(file)
 	local input = io.open(file, 'r'):read('l')
 	local result = 0
-	local fragmented = {}
 	local is_data = false
-	local disk = {}
 	local fileid = 0
+	local disk = {}
 
 	for char in string.gmatch(input, '.') do
 		is_data = not is_data
 		local value = tonumber(char)
 		if is_data then
-			fileid = fileid + 1
 			table.insert(disk, { file_id = fileid, size = value })
+			fileid = fileid + 1
 		else
-			table.insert(disk, { size = value })
+			table.insert(disk, { file_id = 0, size = value })
 		end
 	end
 
-	-- local new_order = {}
-	-- for _, copy in pairs(files) do
-	-- 	table.insert(new_order, copy)
-	-- end
-	--
-	-- print_disk(new_order, fragmented)
-	-- local moves = 0
-	-- for i = #files, 2, -1 do
-	-- 	print("checking file_id: " .. files[i].file_id .. " of size " .. files[i].size)
-	-- 	print("BEFORE")
-	-- 	print_disk(new_order, fragmented)
-	-- 	for j = 1, i - 1 do
-	-- 		if files[i].size <= fragmented[j] then
-	-- 			fragmented[j] = fragmented[j] - files[i].size
-	-- 			fragmented[i] = fragmented[i - 1] + fragmented[i] + files[i].size
-	-- 			local thing = table.remove(new_order, i + moves)
-	-- 			table.insert(new_order, j + 1, thing)
-	-- 			table.remove(fragmented, i - 1)
-	-- 			table.insert(fragmented, j, 0)
-	-- 			moves = moves + 1
-	-- 			break
-	-- 		end
-	-- 	end
-	-- 	print_disk(new_order, fragmented)
-	-- 	print("AFTER")
-	-- end
-	--
-	-- local disk = {}
-	-- for i = 1, #files do
-	-- 	for data = 1, new_order[i].size do
-	-- 		table.insert(disk, new_order[i].file_id)
-	-- 	end
-	-- 	for empty = 1, fragmented[i] do
-	-- 		table.insert(disk, 0)
-	-- 	end
-	-- end
-	--
-	-- for i = 1, #disk do
-	-- 	result = result + disk[i] * (i - 1)
-	-- end
+	local already_checked = {}
+	local i = #disk
+	while i >= 2 do
+		if disk[i].file_id ~= 0 and already_checked[disk[i].file_id] == nil then
+			local file_on_disk = disk[i]
+			already_checked[file_on_disk.file_id] = {}
+			for j = 2, i - 1 do
+				if disk[j].file_id == 0 and disk[j].size >= file_on_disk.size then
+					table.insert(disk, j, file_on_disk)
+					disk[j + 1].size = disk[j + 1].size - file_on_disk.size
+					disk[i + 1]      = {
+						file_id = 0,
+						size = file_on_disk.size,
+					}
+					i                = i + 1
+					break
+				end
+			end
+		end
+		i = i - 1
+	end
+
+	local idx = 0
+	for i = 1, #disk do
+		for j = idx, idx + disk[i].size - 1 do
+			result = result + j * disk[i].file_id
+		end
+		idx = idx + disk[i].size
+	end
 
 	return result
 end
