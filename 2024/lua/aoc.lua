@@ -7,11 +7,19 @@ local day6 = require("days.day6")
 local day7 = require("days.day7")
 local day8 = require("days.day8")
 local day9 = require("days.day9")
+local day10 = require("days.day10")
 local benchmark = require("benchmark")
 
 local function execute(day, part, f, ...)
-	local r, d, u = benchmark.run(f, ...)
-	print("Day, " .. day .. " Part, " .. part .. ":\n   Exectution time: " .. d .. " " .. u .. "\n   Result: " .. r)
+	local d, u, r1, r2 = benchmark.run(f, ...)
+
+	if r2 ~= nil then
+		print("Day, " .. day .. " Part, " .. part .. ":\n   Execution time: " .. d .. " " .. u .. "\n   Result: " .. r1)
+		print("Day, " .. day .. " Part, " .. part + 1 ..
+			":\n   Execution time: N/A \n   Result: " .. r2)
+	else
+		print("Day, " .. day .. " Part, " .. part .. ":\n   Execution time: " .. d .. " " .. u .. "\n   Result: " .. r1)
+	end
 end
 
 execute(1, 1, day1.part1, "../input/day1.txt")
@@ -32,3 +40,4 @@ execute(8, 1, day8.part1, "../input/day8.txt")
 execute(8, 2, day8.part2, "../input/day8.txt")
 execute(9, 1, day9.part1, "../input/day9.txt")
 execute(9, 2, day9.part2, "../input/day9.txt")
+execute(10, 1, day10.part1, "../input/day10.txt")

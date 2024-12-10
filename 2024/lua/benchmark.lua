@@ -2,7 +2,7 @@ local benchmark = {}
 
 benchmark.run = function(f, ...)
 	local before = os.clock()
-	local result = f(...)
+	local result = table.pack(f(...))
 	local after = os.clock()
 
 	local duration = after - before
@@ -17,7 +17,7 @@ benchmark.run = function(f, ...)
 		unit = "seconds"
 	end
 
-	return result, duration, unit
+	return duration, unit, table.unpack(result)
 end
 
 return benchmark
