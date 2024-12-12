@@ -57,12 +57,15 @@ local function get_directional_neighbours(point, rows, cols)
 	return neighbours
 end
 
-local function merge_regions(plots, region_into, region_from)
-	for _, plot in ipairs(plots) do
-		if plot.region == region_from then
-			plot.region = region_into
-		end
+local func_calls = 0
+
+local function merge_regions(plots, regions, region_into, region_from)
+	func_calls = func_calls + 1
+	for _, plot_idx in ipairs(regions[region_into].plots) do
+		plots[plot_idx].region = region_from
+		table.insert(regions[region_from].plots, plot_idx)
 	end
+	regions[region_into].plots = nil
 end
 
 day12.part1 = function(file)
@@ -81,8 +84,13 @@ day12.part1 = function(file)
 				plot.perimeter = plot.perimeter + 1
 			else
 				if neighbour_idx < i then
-					if plots[neighbour_idx].region ~= plot.region then
-						merge_regions(plots, plots[neighbour_idx].region, plot.region)
+					if plot.region == 0 then
+						plot.region = plots[neighbour_idx].region
+						table.insert(regions[plot.region].plots, i)
+					else
+						if plots[neighbour_idx].region ~= plot.region then
+							merge_regions(plots, regions, plots[neighbour_idx].region, plot.region)
+						end
 					end
 				end
 			end
@@ -90,11 +98,8 @@ day12.part1 = function(file)
 		if plot.region == 0 then
 			num_regions = num_regions + 1
 			plot.region = num_regions
+			table.insert(regions, { area = 0, perimeter = 0, plots = { i } })
 		end
-	end
-
-	for i = 1, num_regions do
-		regions[i] = { area = 0, perimeter = 0 }
 	end
 
 	for _, plot in ipairs(plots) do
@@ -103,7 +108,7 @@ day12.part1 = function(file)
 	end
 
 	local result = 0
-	for _, region in ipairs(regions) do
+	for _, region in pairs(regions) do
 		result = result + (region.area * region.perimeter)
 	end
 
@@ -111,9 +116,39 @@ day12.part1 = function(file)
 end
 
 day12.part2 = function(file)
-	if not plots then
-		day12.part1(file)
+	local grid = io.open(file, 'r'):read('a')
+	numrows, numcols = get_dimensions(grid)
+	plots = {}
+	local regions = {}
+	num_regions = 0
+	local input, _ = string.gsub(grid, "\n", "")
+	for i = 1, string.len(input) do
+		local neighbours = get_neighbours_locations(i, numrows, numcols)
+		local plot = { type = string.sub(input, i, i), perimeter = (4 - #neighbours), region = 0 }
+		table.insert(plots, plot)
+		for idx, neighbour_idx in ipairs(neighbours) do
+			if string.sub(input, neighbour_idx, neighbour_idx) ~= plot.type then
+				plot.perimeter = plot.perimeter + 1
+			else
+				if neighbour_idx < i then
+					if plot.region == 0 then
+						plot.region = plots[neighbour_idx].region
+						table.insert(regions[plot.region].plots, i)
+					else
+						if plots[neighbour_idx].region ~= plot.region then
+							merge_regions(plots, regions, plots[neighbour_idx].region, plot.region)
+						end
+					end
+				end
+			end
+		end
+		if plot.region == 0 then
+			num_regions = num_regions + 1
+			plot.region = num_regions
+			table.insert(regions, { area = 0, perimeter = 0, plots = { i } })
+		end
 	end
+
 	for plot_idx, plot in ipairs(plots) do
 		local neighbours = get_directional_neighbours(plot_idx, numrows, numcols)
 		local up, left, right, down, leftup, leftdown, rightup, rightdown
