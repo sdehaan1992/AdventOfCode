@@ -14,7 +14,6 @@ day14.part1 = function(file)
 	for _, robot in ipairs(robots) do
 		robot.x = (robot.x + (100 * robot.move_x)) % x_axis
 		robot.y = (robot.y + (100 * robot.move_y)) % y_axis
-		print(_, robot.x, robot.y)
 		if robot.x < x_axis // 2 then
 			if robot.y < y_axis // 2 then
 				q1 = q1 + 1
