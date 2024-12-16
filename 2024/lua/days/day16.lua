@@ -131,42 +131,48 @@ day16.part2 = function(file)
 
 	grid[start.row][start.col].direction = 'E'
 	pathfinding.dijkstra(nodes, grid[start.row][start.col], get_neighbours)
+	local path_length = grid[finish.row][finish.col].distance
 
-	local seating_arrangements = {}
-	local seats_to_check = {}
-	table.insert(seats_to_check, grid[finish.row][finish.col])
-	seating_arrangements[grid[finish.row][finish.col]] = 0
+	for i = 1, #grid do
+		for j = 1, #grid[i] do
+			grid[i][j].distance_from_start = grid[i][j].distance
+			grid[i][j].distance = nil
+			grid[i][j].direction = nil
+			grid[i][j].from = nil
+		end
+	end
 
-	while #seats_to_check ~= 0 do -- until start node or something
-		local curr_node = table.remove(seats_to_check)
-		print("checking node " .. nodes[curr_node].row .. "," .. nodes[curr_node].col)
-		if curr_node.from ~= nil then
-			local distance = curr_node.distance
-			local diff_to_from = distance - curr_node.from.distance
-			for _, neighbour in ipairs(get_neighbours(curr_node)) do
-				if neighbour.node == curr_node.from then
-					seating_arrangements[neighbour.node] = 0
-					table.insert(seats_to_check, neighbour.node)
+	grid[finish.row][finish.col].direction = 'S'
+	pathfinding.dijkstra(nodes, grid[finish.row][finish.col], get_neighbours)
+	local reversed_pathlength = grid[start.row][start.col].distance
+	print(path_length)
+	print(reversed_pathlength)
+
+	local seats = {}
+	for i = 1, #grid do
+		for j = 1, #grid[i] do
+			if grid[i][j].distance_from_start then
+				if grid[i][j].distance_from_start + grid[i][j].distance <= path_length then
+					seats[grid[i][j]] = 0
+					grid[i][j].display = "O"
 				end
 			end
 		end
 	end
 
+	-- local print_grid = ""
+	-- for i = 1, #grid do
+	-- 	for j = 1, #grid[i] do
+	-- 		print_grid = print_grid .. grid[i][j].display
+	-- 	end
+	-- 	print_grid = print_grid .. "\n"
+	-- end
+	-- print(print_grid)
+
 	local result = 0
-	for node, _ in pairs(seating_arrangements) do
-		print("node has good seating: " .. nodes[node].row .. "," .. nodes[node].col)
-		grid[nodes[node].row][nodes[node].col].display = "O"
+	for _, _ in pairs(seats) do
 		result = result + 1
 	end
-
-	local print_grid = ""
-	for i = 1, rows do
-		for j = 1, cols do
-			print_grid = print_grid .. grid[i][j].display
-		end
-		print_grid = print_grid .. "\n"
-	end
-	print(print_grid)
 	return result
 end
 

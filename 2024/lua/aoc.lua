@@ -57,5 +57,5 @@ end
 -- execute(14, 2, day14.part2, "../input/day14.txt")
 -- execute(15, 1, day15.part1, "../input/day15.txt")
 -- execute(15, 2, day15.part2, "../input/day15.txt")
-execute(16, 1, day16.part1, "../input/day16.txt")
--- execute(16, 2, day16.part2, "../input/day16-example.txt")
+-- execute(16, 1, day16.part1, "../input/day16.txt")
+execute(16, 2, day16.part2, "../input/day16-example.txt")
