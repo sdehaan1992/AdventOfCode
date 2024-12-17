@@ -105,74 +105,90 @@ day16.part1 = function(file)
 end
 
 day16.part2 = function(file)
+	local nodekey = function(row, col, dir)
+		return "r" .. tostring(row) .. ",c" .. tostring(col) .. "," .. dir
+	end
+
+	local neighbour_finder = function(node)
+		local reachable_neighbours = {}
+		for _, neighbour in pairs(node.neighbours) do
+			if neighbour.node.display and neighbour.node.display ~= '#' then
+				table.insert(reachable_neighbours, neighbour)
+			end
+		end
+		return reachable_neighbours
+	end
+
 	local input = io.open(file, 'r'):read('a')
 	rows, cols = get_dimensions(input)
 
 	local start
 	local finish
-	for i = 1, rows do
-		grid[i] = {}
-	end
+	local nodes = {}
 
 	local row_count = 0
 	for line in string.gmatch(input, "(.-)\n") do
 		row_count = row_count + 1
+		local col_count = 1
 		for char in string.gmatch(line, ".") do
-			local node = { display = char }
-			table.insert(grid[row_count], node)
-			nodes[node] = { row = row_count, col = #grid[row_count] }
+			local nodeN = { display = char, direction = "N", row = row_count, col = col_count }
+			local nodeS = { display = char, direction = "S", row = row_count, col = col_count }
+			local nodeW = { display = char, direction = "W", row = row_count, col = col_count }
+			local nodeE = { display = char, direction = "E", row = row_count, col = col_count }
+			nodeN.neighbours = { { node = nodeE, distance = 1000 }, { node = nodeW, distance = 1000 }, { node = nodeS, distance = 1000 } }
+			nodeS.neighbours = { { node = nodeN, distance = 1000 }, { node = nodeW, distance = 1000 }, { node = nodeE, distance = 1000 } }
+			nodeW.neighbours = { { node = nodeN, distance = 1000 }, { node = nodeS, distance = 1000 }, { node = nodeE, distance = 1000 } }
+			nodeE.neighbours = { { node = nodeN, distance = 1000 }, { node = nodeW, distance = 1000 }, { node = nodeS, distance = 1000 } }
+			nodes[nodekey(row_count, col_count, nodeN.direction)] = nodeN
+			nodes[nodekey(row_count, col_count, nodeS.direction)] = nodeS
+			nodes[nodekey(row_count, col_count, nodeW.direction)] = nodeW
+			nodes[nodekey(row_count, col_count, nodeE.direction)] = nodeE
+			col_count = col_count + 1
 			if char == 'S' then
-				start = { row = row_count, col = #grid[row_count] }
+				start = nodeE
 			elseif char == "E" then
-				finish = { row = row_count, col = #grid[row_count] }
+				finish = { nodeN, nodeS, nodeE, nodeW }
 			end
 		end
 	end
 
-	grid[start.row][start.col].direction = 'E'
-	pathfinding.dijkstra(nodes, grid[start.row][start.col], get_neighbours)
-	local path_length = grid[finish.row][finish.col].distance
-
-	for i = 1, #grid do
-		for j = 1, #grid[i] do
-			grid[i][j].distance_from_start = grid[i][j].distance
-			grid[i][j].distance = nil
-			grid[i][j].direction = nil
-			grid[i][j].from = nil
+	for _, node in pairs(nodes) do
+		if node.direction == 'N' then
+			table.insert(node.neighbours, { node = nodes[nodekey(node.row - 1, node.col, node.direction)], distance = 1 })
+		elseif node.direction == 'S' then
+			table.insert(node.neighbours, { node = nodes[nodekey(node.row + 1, node.col, node.direction)], distance = 1 })
+		elseif node.direction == 'E' then
+			table.insert(node.neighbours, { node = nodes[nodekey(node.row, node.col + 1, node.direction)], distance = 1 })
+		else
+			table.insert(node.neighbours, { node = nodes[nodekey(node.row, node.col - 1, node.direction)], distance = 1 })
 		end
 	end
 
-	grid[finish.row][finish.col].direction = 'S'
-	pathfinding.dijkstra(nodes, grid[finish.row][finish.col], get_neighbours)
-	local reversed_pathlength = grid[start.row][start.col].distance
-	print(path_length)
-	print(reversed_pathlength)
+	pathfinding.dijkstra_all(nodes, start, neighbour_finder)
 
-	local seats = {}
-	for i = 1, #grid do
-		for j = 1, #grid[i] do
-			if grid[i][j].distance_from_start then
-				if grid[i][j].distance_from_start + grid[i][j].distance <= path_length then
-					seats[grid[i][j]] = 0
-					grid[i][j].display = "O"
-				end
+	local fastest_nodes = {}
+	local function trace_route(node)
+		fastest_nodes[nodekey(node.row, node.col, "")] = node
+		for _, curr_node in ipairs(node.from) do
+			if curr_node ~= start then
+				trace_route(curr_node)
 			end
 		end
 	end
+	fastest_nodes[nodekey(start.row, start.col, "")] = start
 
-	-- local print_grid = ""
-	-- for i = 1, #grid do
-	-- 	for j = 1, #grid[i] do
-	-- 		print_grid = print_grid .. grid[i][j].display
-	-- 	end
-	-- 	print_grid = print_grid .. "\n"
-	-- end
-	-- print(print_grid)
+	local min_route = math.min(finish[1].distance, finish[2].distance, finish[3].distance, finish[4].distance)
+	for _, finish_node in ipairs(finish) do
+		if finish_node.distance == min_route then
+			trace_route(finish_node)
+		end
+	end
 
 	local result = 0
-	for _, _ in pairs(seats) do
+	for _, node in pairs(fastest_nodes) do
 		result = result + 1
 	end
+
 	return result
 end
 
