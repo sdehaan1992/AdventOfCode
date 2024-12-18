@@ -99,7 +99,7 @@ day16.part1 = function(file)
 	end
 
 	grid[start.row][start.col].direction = 'E'
-	pathfinding.dijkstra(nodes, grid[start.row][start.col], get_neighbours)
+	pathfinding.dijkstra(grid[start.row][start.col], get_neighbours)
 
 	return grid[finish.row][finish.col].distance
 end
@@ -164,7 +164,7 @@ day16.part2 = function(file)
 		end
 	end
 
-	pathfinding.dijkstra_all(nodes, start, neighbour_finder)
+	pathfinding.dijkstra_all(start, neighbour_finder)
 
 	local fastest_nodes = {}
 	local function trace_route(node)

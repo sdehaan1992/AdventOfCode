@@ -1,6 +1,6 @@
 local pathfinding = {}
 
-pathfinding.dijkstra = function(nodes, start_node, neighbour_finder, end_node)
+pathfinding.dijkstra = function(start_node, neighbour_finder)
 	local function sort_nodes(node_a, node_b)
 		return node_a.distance > node_b.distance
 	end
@@ -24,7 +24,7 @@ pathfinding.dijkstra = function(nodes, start_node, neighbour_finder, end_node)
 	end
 end
 
-pathfinding.dijkstra_all = function(nodes, start_node, neighbour_finder, end_node)
+pathfinding.dijkstra_all = function(start_node, neighbour_finder)
 	local function sort_nodes(node_a, node_b)
 		return node_a.distance > node_b.distance
 	end
