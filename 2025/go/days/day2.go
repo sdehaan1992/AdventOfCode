@@ -46,15 +46,6 @@ func (*Day2) part1(input []byte) int {
 	return idSum
 }
 
-func splitIntoParts(input string, parts int) []string {
-	partsSize := len(input) / parts
-	res := make([]string, parts)
-	for i := range parts {
-		res[i] = input[i*partsSize : (i+1)*partsSize]
-	}
-	return res
-}
-
 func (*Day2) part2(input []byte) int {
 	scanner := bufio.NewScanner(bytes.NewReader(input))
 	re := regexp.MustCompile(`(\d+)-(\d+)`)
@@ -70,10 +61,11 @@ func (*Day2) part2(input []byte) int {
 				length := len(value)
 				for l := 2; l <= length; l++ {
 					if len(value)%l == 0 {
-						parts := splitIntoParts(value, l)
+						partsSize := len(value) / l
+						firstPart := value[:partsSize]
 						equal := true
-						for i := 1; i < len(parts); i++ {
-							if parts[0] != parts[i] {
+						for i := range l {
+							if value[i*partsSize:(i+1)*partsSize] != firstPart {
 								equal = false
 								break
 							}
