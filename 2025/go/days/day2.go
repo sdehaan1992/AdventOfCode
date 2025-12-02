@@ -24,15 +24,20 @@ func (*Day2) part1(input []byte) int {
 		line := scanner.Text()
 		matches := re.FindAllStringSubmatch(line, -1)
 		for _, match := range matches {
-			left, _ := strconv.Atoi(match[1])
-			right, _ := strconv.Atoi(match[2])
+			var left, right int
+			lowerbound, _ := strconv.Atoi(match[1])
+			upperbound, _ := strconv.Atoi(match[2])
+			left, _ = strconv.Atoi(match[1][:len(match[1])/2])
+			if len(match[2])%2 == 0 {
+				right, _ = strconv.Atoi(match[2][:len(match[2])/2])
+			} else {
+				right, _ = strconv.Atoi(match[2][:len(match[2])/2+1])
+			}
 			for val := left; val <= right; val++ {
-				value := strconv.Itoa(val)
-				length := len(value)
-				if length%2 == 0 {
-					if value[:length/2] == value[length/2:] {
-						idSum += val
-					}
+				valAsString := strconv.Itoa(val)
+				doubledVal, _ := strconv.Atoi(valAsString + valAsString)
+				if doubledVal >= lowerbound && doubledVal <= upperbound {
+					idSum += doubledVal
 				}
 			}
 		}
