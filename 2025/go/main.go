@@ -24,7 +24,9 @@ func main() {
 		}
 		switch file.Name() {
 		case "1":
-			days.Day1(data)
+			// days.RunDay1(data)
+		case "2":
+			days.RunDay2(data)
 		default:
 			log.Println("Unknown day")
 		}

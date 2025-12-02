@@ -8,12 +8,15 @@ import (
 	"strconv"
 )
 
-func Day1(input []byte) {
-	part1(input)
-	part2(input)
+type Day1 struct{}
+
+func RunDay1(input []byte) {
+	day := new(Day1)
+	day.part1(input)
+	day.part2(input)
 }
 
-func part1(input []byte) {
+func (*Day1) part1(input []byte) {
 	curr_value := 50
 	ticks := 0
 	scanner := bufio.NewScanner(bytes.NewReader(input))
@@ -35,7 +38,7 @@ func part1(input []byte) {
 	fmt.Println(ticks)
 }
 
-func part2(input []byte) {
+func (*Day1) part2(input []byte) {
 	curr_value := 50
 	ticks := 0
 	scanner := bufio.NewScanner(bytes.NewReader(input))
