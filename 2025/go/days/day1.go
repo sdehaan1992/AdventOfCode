@@ -3,7 +3,7 @@ package days
 import (
 	"bufio"
 	"bytes"
-	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 )
@@ -12,11 +12,11 @@ type Day1 struct{}
 
 func RunDay1(input []byte) {
 	day := new(Day1)
-	day.part1(input)
-	day.part2(input)
+	log.Printf("D1P1: %d", day.part1(input))
+	log.Printf("D1P2: %d", day.part2(input))
 }
 
-func (*Day1) part1(input []byte) {
+func (*Day1) part1(input []byte) int {
 	curr_value := 50
 	ticks := 0
 	scanner := bufio.NewScanner(bytes.NewReader(input))
@@ -35,10 +35,10 @@ func (*Day1) part1(input []byte) {
 		}
 	}
 
-	fmt.Println(ticks)
+	return ticks
 }
 
-func (*Day1) part2(input []byte) {
+func (*Day1) part2(input []byte) int {
 	curr_value := 50
 	ticks := 0
 	scanner := bufio.NewScanner(bytes.NewReader(input))
@@ -65,5 +65,5 @@ func (*Day1) part2(input []byte) {
 		}
 	}
 
-	fmt.Println(ticks)
+	return ticks
 }
