@@ -6,6 +6,7 @@ import (
 	"log"
 	"regexp"
 	"strconv"
+	"sync"
 )
 
 type Day2 struct{}
@@ -40,6 +41,7 @@ func (*Day2) part1(input []byte) int {
 					idSum += doubledVal
 				}
 			}
+
 		}
 	}
 
@@ -50,35 +52,45 @@ func (*Day2) part2(input []byte) int {
 	scanner := bufio.NewScanner(bytes.NewReader(input))
 	re := regexp.MustCompile(`(\d+)-(\d+)`)
 	idSum := 0
+	var wg sync.WaitGroup
+	var mutex sync.Mutex
 	for scanner.Scan() {
 		line := scanner.Text()
 		matches := re.FindAllStringSubmatch(line, -1)
 		for _, match := range matches {
-			left, _ := strconv.Atoi(match[1])
-			right, _ := strconv.Atoi(match[2])
-			for val := left; val <= right; val++ {
-				value := strconv.Itoa(val)
-				length := len(value)
-				for l := 2; l <= length; l++ {
-					if len(value)%l == 0 {
-						partsSize := len(value) / l
-						firstPart := value[:partsSize]
-						equal := true
-						for i := range l {
-							if value[i*partsSize:(i+1)*partsSize] != firstPart {
-								equal = false
+			wg.Add(1)
+			go func(matcher []string, waitGroup *sync.WaitGroup) {
+				left, _ := strconv.Atoi(match[1])
+				right, _ := strconv.Atoi(match[2])
+				for val := left; val <= right; val++ {
+					value := strconv.Itoa(val)
+					length := len(value)
+					for l := 2; l <= length; l++ {
+						if len(value)%l == 0 {
+							partsSize := len(value) / l
+							firstPart := value[:partsSize]
+							equal := true
+							for i := range l {
+								if value[i*partsSize:(i+1)*partsSize] != firstPart {
+									equal = false
+									break
+								}
+							}
+							if equal {
+								mutex.Lock()
+								idSum += val
+								mutex.Unlock()
 								break
 							}
 						}
-						if equal {
-							idSum += val
-							break
-						}
 					}
 				}
-			}
+				wg.Done()
+			}(match, &wg)
 		}
 	}
+
+	wg.Wait()
 
 	return idSum
 }
