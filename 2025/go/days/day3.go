@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"log"
 	"strconv"
+	"strings"
 )
 
 type Day3 struct{}
@@ -40,22 +41,22 @@ func (*Day3) part2(input []byte) int {
 func execute(line string, initialBatteries int) int {
 	idx, largest := -1, ""
 	remainingBatteries := initialBatteries
-	resString := ""
+	var resString strings.Builder
 	for remainingBatteries > 0 {
 		var idxSubString int
 		largest, idxSubString = findLargest(line[idx+1 : len(line)-remainingBatteries+1])
 		idx += idxSubString + 1
-		resString += largest
+		resString.WriteString(largest)
 		remainingBatteries--
 	}
-	val, _ := strconv.Atoi(resString)
+	val, _ := strconv.Atoi(resString.String())
 	return val
 }
 
 func findLargest(line string) (string, int) {
 	largest, idx := 0, 0
 	for index, val := range line {
-		value, _ := strconv.Atoi(string(val))
+		value := int(val - '0')
 		if value > largest {
 			largest = value
 			idx = index
