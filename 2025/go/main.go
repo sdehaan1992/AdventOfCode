@@ -28,7 +28,9 @@ func main() {
 		case "2":
 			// days.RunDay2(data)
 		case "3":
-			days.RunDay3(data)
+			// days.RunDay3(data)
+		case "4":
+			days.RunDay4(data)
 		default:
 			log.Println("Unknown day")
 		}

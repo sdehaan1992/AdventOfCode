@@ -77,3 +77,27 @@ func BenchmarkD3P2(b *testing.B) {
 		day.part2(contents)
 	}
 }
+
+func BenchmarkD4P1(b *testing.B) {
+	contents, err := os.ReadFile("../input/4")
+	if err != nil {
+		log.Fatal("Cannot open test input")
+	}
+
+	day := new(Day4)
+	for b.Loop() {
+		day.part1(contents)
+	}
+}
+
+func BenchmarkD4P2(b *testing.B) {
+	contents, err := os.ReadFile("../input/4")
+	if err != nil {
+		log.Fatal("Cannot open test input")
+	}
+
+	day := new(Day4)
+	for b.Loop() {
+		day.part2(contents)
+	}
+}
