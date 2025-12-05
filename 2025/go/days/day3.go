@@ -12,8 +12,8 @@ type Day3 struct{}
 
 func RunDay3(input []byte) {
 	day := new(Day3)
-	log.Printf("D2P1: %d", day.part1(input))
-	log.Printf("D2P2: %d", day.part2(input))
+	log.Printf("D3P1: %d", day.part1(input))
+	log.Printf("D3P2: %d", day.part2(input))
 }
 
 func (*Day3) part1(input []byte) int {
