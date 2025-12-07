@@ -35,6 +35,8 @@ func main() {
 			days.RunDay5(data)
 		case "6":
 			days.RunDay6(data)
+		case "7":
+			days.RunDay7(data)
 		default:
 			log.Println("Unknown day")
 		}
