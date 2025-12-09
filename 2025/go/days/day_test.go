@@ -197,3 +197,27 @@ func BenchmarkD8P2(b *testing.B) {
 		day.part2(contents)
 	}
 }
+
+func BenchmarkD9P1(b *testing.B) {
+	contents, err := os.ReadFile("../input/9")
+	if err != nil {
+		log.Fatal("Cannot open test input")
+	}
+
+	day := new(Day9)
+	for b.Loop() {
+		day.part1(contents)
+	}
+}
+
+func BenchmarkD9P2(b *testing.B) {
+	contents, err := os.ReadFile("../input/9")
+	if err != nil {
+		log.Fatal("Cannot open test input")
+	}
+
+	day := new(Day9)
+	for b.Loop() {
+		day.part2(contents)
+	}
+}
