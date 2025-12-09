@@ -59,8 +59,8 @@ func (*Day9) part2(input []byte) int {
 	edges := make([]line2D, 0)
 	for scanner.Scan() {
 		coordinate := strings.Split(scanner.Text(), ",")
-		row, _ := strconv.Atoi(coordinate[1])
-		col, _ := strconv.Atoi(coordinate[0])
+		row, _ := strconv.Atoi(coordinate[0])
+		col, _ := strconv.Atoi(coordinate[1])
 		curr := Point{row: row, col: col}
 		redTiles = append(redTiles, curr)
 	}
@@ -80,7 +80,7 @@ func (*Day9) part2(input []byte) int {
 		a := redTiles[i]
 		for j := i + 1; j < len(redTiles); j++ {
 			b := redTiles[j]
-			area := (math.Abs(float64(a.col-b.col)) + 1) * (math.Abs(float64(a.row-b.row) + 1))
+			area := (math.Abs(float64(a.col-b.col)) + 1) * (math.Abs(float64(a.row-b.row)) + 1)
 			squares = append(squares, square{diagPoints: [2]Point{a, b}, size: area})
 		}
 	}
